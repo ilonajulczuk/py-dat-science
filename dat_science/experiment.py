@@ -13,6 +13,7 @@ def timed(fn):
 
 
 class Result(object):
+
     def __init__(self, value=None, execution_time=None, problem=None):
         self.value = value
         self.execution_time = execution_time
@@ -23,13 +24,16 @@ class Result(object):
 
     def __str__(self):
         return "Result {value}, in {execution_time:.6f} s, problems: {problem}".format(
-                value=self.value,
-                execution_time=self.execution_time,
-                problem=self.problem
+            value=self.value,
+            execution_time=self.execution_time,
+            problem=self.problem
         )
 
 
 class Experiment(object):
+
+    """Wrapper for running experiments"""
+
     def __init__(self, name, old, new):
         self.name = name
         self.old = old
@@ -63,5 +67,3 @@ class Experiment(object):
         report_lines.append("Control: {}".format(self.control_result))
         report_lines.append("New: {}".format(self.new_result))
         return "\n".join(report_lines)
-        return self.control_result, self.new_result
-
