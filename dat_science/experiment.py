@@ -20,7 +20,7 @@ class Result(object):
         self.experiment = experiment
         self.value = value
         self.duration = duration
-        self.problem = self.serialize_problem(problem)
+        self.problem = problem
 
     def is_alright(self):
         return self.problem is None
@@ -40,7 +40,7 @@ class Result(object):
         return "Result {value}, in {duration} s, problems: {problem}".format(
             value=self.value,
             duration=self.duration,
-            problem=self.problem
+            problem=self.serialize_problem(self.problem)
         )
 
     def __eq__(self, other):
@@ -94,16 +94,15 @@ class Experiment(object):
             self.panic(self.control_result.problem)
 
     def panic(self, problem):
-        exception, _ = problem
-        raise exception
+        raise problem[0], problem[1], problem[2]
 
     def observe(self, function, args, kwargs):
         try:
             value, duration = timed(function)(*args, **kwargs)
             return Result(self, value=value, duration=duration)
         except Exception as e:
-            import traceback
-            problem = e, traceback.format_exc()
+            import sys
+            problem = sys.exc_info()
             return Result(self, problem=problem)
 
     def is_new_enabled(self, args, kwargs):
