@@ -17,4 +17,24 @@ experiment = Experiment('silly example', compute_something,
                         compute_alternatively)
 
 result = experiment.run(1, 2, 3)
-print(experiment.report())
+
+
+def will_throw(a, b, x):
+    raise ValueError(a)
+
+experiment = Experiment('silly throwing example #1',
+                        compute_alternatively,
+                        will_throw)
+
+result = experiment.run(1, 2, 3)
+
+experiment = Experiment('silly throwing example #2',
+                        will_throw,
+                        compute_alternatively)
+
+try:
+    result = experiment.run(1, 2, 3)
+except:
+    import traceback
+    print('ups!')
+    traceback.print_exc()

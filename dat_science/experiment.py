@@ -1,4 +1,5 @@
 import time
+import random
 import functools
 
 
@@ -23,7 +24,7 @@ class Result(object):
         return self.problem is None
 
     def __str__(self):
-        return "Result {value}, in {execution_time:.6f} s, problems: {problem}".format(
+        return "Result {value}, in {execution_time} s, problems: {problem}".format(
             value=self.value,
             execution_time=self.execution_time,
             problem=self.problem
@@ -34,16 +35,22 @@ class Experiment(object):
 
     """Wrapper for running experiments"""
 
-    def __init__(self, name, old, new):
+    def __init__(self, name, control, new):
         self.name = name
-        self.old = old
+        self.control = control
         self.new = new
         self.control_result = None
         self.new_result = None
 
     def run(self, *args, **kwargs):
-        self.control_result = self.observe(self.old, args, kwargs)
-        self.new_result = self.observe(self.new, args, kwargs)
+        self.control_result = self.observe(self.control, args, kwargs)
+
+        if self.is_new_enabled(args, kwargs):
+            self.new_result = self.observe(self.new, args, kwargs)
+
+            # publish results only if new way is also run
+            self.publish()
+
         if self.control_result.is_alright():
             return self.control_result.value
         else:
@@ -61,6 +68,12 @@ class Experiment(object):
             import traceback
             problem = e, traceback.format_exc()
             return Result(problem=problem)
+
+    def is_new_enabled(self, args, kwargs):
+        return random.random() > 0.5
+
+    def publish(self):
+        print(self.report())
 
     def report(self):
         report_lines = ["-" * 60, "Experiment: {}".format(self.name), "-" * 60]
