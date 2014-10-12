@@ -1,6 +1,6 @@
 # dat-science for python
 
-Small Python for refactoring critical chunks of your code.
+Small Python library for refactoring critical chunks of your code.
 Helps trying out new solutions fast in production environment using science.
 
 Refactoring can be risky, code may turn out to be buggy or give different
